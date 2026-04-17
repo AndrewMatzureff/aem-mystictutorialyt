@@ -11,8 +11,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
-import io.github.andrewmatzureff.mystictutorialyt.asset.MapAsset;
 import io.github.andrewmatzureff.mystictutorialyt.component.Graphic;
 import io.github.andrewmatzureff.mystictutorialyt.component.Transform;
 
@@ -26,14 +24,14 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
     private final Viewport viewport;
     private final OrthographicCamera camera;
 
-    public RenderSystem(Batch batch, Viewport viewport, AssetService assetService) {
+    public RenderSystem(Batch batch, Viewport viewport, OrthographicCamera camera) {
         super(Family.all(Transform.class, Graphic.class).get()
             , Comparator.comparing(Transform.MAPPER::get)
         );
         this.viewport = viewport;
         this.batch = batch;
+        this.camera = camera;
         mapRenderer = new OrthogonalTiledMapRenderer(null, UNIT_SCALE, batch);
-        camera = (OrthographicCamera) viewport.getCamera();
     }
 
     public void setMap(TiledMap tiledMap) {
@@ -48,7 +46,9 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
         mapRenderer.render();
 
         forceSort();
+        batch.begin();
         super.update(delta);
+        batch.end();
     }
 
     @Override

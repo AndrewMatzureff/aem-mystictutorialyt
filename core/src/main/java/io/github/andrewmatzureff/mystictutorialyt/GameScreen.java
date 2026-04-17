@@ -6,12 +6,15 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
 import io.github.andrewmatzureff.mystictutorialyt.asset.MapAsset;
 import io.github.andrewmatzureff.mystictutorialyt.system.RenderSystem;
+import io.github.andrewmatzureff.mystictutorialyt.tiled.TiledAshleyConfigurator;
+import io.github.andrewmatzureff.mystictutorialyt.tiled.TiledService;
 
 import java.util.Arrays;
 
@@ -25,6 +28,8 @@ public class GameScreen extends ScreenAdapter {
     private final Viewport viewport;
     private final OrthographicCamera camera;
     private final Engine engine;
+    private final TiledService tiledService;
+    private final TiledAshleyConfigurator tiledAshleyConfigurator;
 
     public GameScreen(Main game) {
         this.game = game;
@@ -32,17 +37,21 @@ public class GameScreen extends ScreenAdapter {
         viewport = game.getViewport();
         camera = game.getCamera();
         batch = game.getBatch();
+        tiledService = new TiledService(assetService);
         engine = new Engine();
+        tiledAshleyConfigurator = new TiledAshleyConfigurator(engine, assetService);
 
-        engine.addSystem(new RenderSystem(batch, viewport, assetService));
+        engine.addSystem(new RenderSystem(batch, viewport, camera));
 //        engine.addSystem(new MoveSystem(batch, viewport, assetService));
 //        engine.addSystem(new AnimationSystem(batch, viewport, assetService));
     }
 
     @Override
     public void show() {
-        assetService.load(MapAsset.MAIN);
-        engine.getSystem(RenderSystem.class).setMap(assetService.get(MapAsset.MAIN));
+        tiledService.setMapChangeConsumer(engine.getSystem(RenderSystem.class)::setMap);
+        tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
+        TiledMap tiledMap = tiledService.loadMap(MapAsset.MAIN);
+        tiledService.setMap(tiledMap);
     }
 
     @Override
