@@ -1,0 +1,27 @@
+plugins {
+  id 'application'
+}
+
+application {
+  mainClass = 'io.github.andrewmatzureff.mystictutorialyt.utils.TexturePackerTool'
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-util'
+
+dependencies {
+  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+  api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+
+  if (enableGraalNative == 'true') {
+    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+  }
+}
+
+tasks.register('removePackedAssets', Delete) {
+  delete "${rootDir}/assets/packed"
+}
+
+tasks.named('run') {
+  dependsOn 'removePackedAssets'
+}

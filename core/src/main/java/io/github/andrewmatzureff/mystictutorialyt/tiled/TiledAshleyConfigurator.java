@@ -3,12 +3,15 @@ package io.github.andrewmatzureff.mystictutorialyt.tiled;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Vector2;
 import io.github.andrewmatzureff.mystictutorialyt.Main;
 import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
+import io.github.andrewmatzureff.mystictutorialyt.asset.AtlasAsset;
 import io.github.andrewmatzureff.mystictutorialyt.component.Graphic;
 import io.github.andrewmatzureff.mystictutorialyt.component.Transform;
 
@@ -48,6 +51,20 @@ public class TiledAshleyConfigurator {
     }
 
     private TextureRegion getTextureRegion(TiledMapTile tile) {
+        String atlasAssetStr = tile.getProperties().get("atlasAsset", AtlasAsset.OBJECTS.name(), String.class);
+        AtlasAsset atlasAsset = AtlasAsset.valueOf(atlasAssetStr);
+        TextureAtlas textureAtlas = assetService.get(atlasAsset);
+        FileTextureData textureData = (FileTextureData) tile
+            .getTextureRegion()
+            .getTexture()
+            .getTextureData();
+        String atlasKey = textureData.getFileHandle().nameWithoutExtension();
+        TextureAtlas.AtlasRegion region = textureAtlas.findRegion(atlasKey + "/" + atlasKey);
+
+        if (region != null) {
+            return region;
+        }
+
         return tile.getTextureRegion();
     }
 }

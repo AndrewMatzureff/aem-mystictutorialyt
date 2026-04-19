@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
+import io.github.andrewmatzureff.mystictutorialyt.screen.LoadingScreen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,9 +64,10 @@ public class Main extends Game {
         glProfiler.enable();
         fpsLogger = new FPSLogger();
 
-        addScreen(new GameScreen(this));
-        setScreen(GameScreen.class);
+        addScreen(new LoadingScreen(this, assetService));
+        setScreen(LoadingScreen.class);
     }
+
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
@@ -73,6 +75,10 @@ public class Main extends Game {
     }
     public void addScreen(Screen screen) {
         screensByClass.put(screen.getClass(), screen);
+    }
+
+    public void removeScreen(Screen screen) {
+        screensByClass.remove(screen.getClass());
     }
 
     public void setScreen(Class<? extends Screen> screenClass) {

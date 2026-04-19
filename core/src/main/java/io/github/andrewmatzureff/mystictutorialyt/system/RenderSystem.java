@@ -6,15 +6,19 @@ import com.badlogic.ashley.systems.SortedIteratingSystem;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.andrewmatzureff.mystictutorialyt.component.Graphic;
 import io.github.andrewmatzureff.mystictutorialyt.component.Transform;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import static io.github.andrewmatzureff.mystictutorialyt.Main.UNIT_SCALE;
 
@@ -23,6 +27,8 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
     private final Batch batch;
     private final Viewport viewport;
     private final OrthographicCamera camera;
+    private final List<MapLayer> fgLayers;
+    private final List<MapLayer> bgLayers;
 
     public RenderSystem(Batch batch, Viewport viewport, OrthographicCamera camera) {
         super(Family.all(Transform.class, Graphic.class).get()
@@ -32,22 +38,45 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
         this.batch = batch;
         this.camera = camera;
         mapRenderer = new OrthogonalTiledMapRenderer(null, UNIT_SCALE, batch);
+        bgLayers = new ArrayList<>();
+        fgLayers = new ArrayList<>();
     }
 
     public void setMap(TiledMap tiledMap) {
         mapRenderer.setMap(tiledMap);
+
+        fgLayers.clear();
+        bgLayers.clear();
+
+        List<MapLayer> currentLayers = bgLayers;
+
+        for (MapLayer layer : tiledMap.getLayers()) {
+            if ("objects".equals(layer.getName())) {
+                currentLayers = fgLayers;
+                continue;
+            }
+
+            if (layer.getClass().equals(MapLayer.class)) {
+                continue;
+            }
+
+            currentLayers.add(layer);
+        }
     }
 
     @Override
     public void update(float delta) {
+        AnimatedTiledMapTile.updateAnimationBaseTime();
         viewport.apply();
+
+        batch.begin();
         batch.setColor(Color.WHITE);
         mapRenderer.setView(camera);
-        mapRenderer.render();
-
+        bgLayers.forEach(mapRenderer::renderMapLayer);
         forceSort();
-        batch.begin();
         super.update(delta);
+        batch.setColor(Color.WHITE);
+        fgLayers.forEach(mapRenderer::renderMapLayer);
         batch.end();
     }
 

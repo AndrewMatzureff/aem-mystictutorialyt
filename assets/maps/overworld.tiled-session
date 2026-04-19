@@ -1,5 +1,5 @@
 {
-    "activeFile": "main.tmx",
+    "activeFile": "objects.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -8,8 +8,8 @@
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": -39,
-                "y": 77
+                "x": 275,
+                "y": 159
             }
         },
         "objects.tsx": {
@@ -35,11 +35,11 @@
         "objects.tsx"
     ],
     "project": "overworld.tiled-project",
-    "property.type": "color",
+    "property.type": "string",
     "recentFiles": [
-        "objects.tsx",
+        "main.tmx",
         "tileset.tsx",
-        "main.tmx"
+        "objects.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.margin": 8,
