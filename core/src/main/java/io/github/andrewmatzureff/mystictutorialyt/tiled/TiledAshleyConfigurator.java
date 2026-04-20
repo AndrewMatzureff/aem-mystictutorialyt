@@ -12,7 +12,9 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.andrewmatzureff.mystictutorialyt.Main;
 import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
 import io.github.andrewmatzureff.mystictutorialyt.asset.AtlasAsset;
+import io.github.andrewmatzureff.mystictutorialyt.component.Controller;
 import io.github.andrewmatzureff.mystictutorialyt.component.Graphic;
+import io.github.andrewmatzureff.mystictutorialyt.component.Move;
 import io.github.andrewmatzureff.mystictutorialyt.component.Transform;
 
 public class TiledAshleyConfigurator {
@@ -36,7 +38,23 @@ public class TiledAshleyConfigurator {
             , textureRegion.getRegionWidth(), textureRegion.getRegionHeight()
             , tileMapObject.getScaleX(), tileMapObject.getScaleY());
 
+        addEntityController(tileMapObject, entity);
+        addEntityMove(tile, entity);
+
         engine.addEntity(entity);
+    }
+
+    private void addEntityMove(TiledMapTile tile, Entity entity) {
+        float speed = tile.getProperties().get("speed", 0f, Float.class);
+        if (speed == 0f) return;
+        entity.add(new Move(speed));
+    }
+
+    private void addEntityController(TiledMapTileMapObject tileMapObject, Entity entity) {
+        boolean controller = tileMapObject.getProperties().get("controller", false, Boolean.class);
+        if (!controller) return;
+
+        entity.add(new Controller());
     }
 
     private void addEntityTransform(Entity entity, float x, float y, int z, float w, float h, float scaleX, float scaleY) {

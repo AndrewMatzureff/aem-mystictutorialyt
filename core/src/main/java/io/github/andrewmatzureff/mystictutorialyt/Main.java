@@ -1,9 +1,6 @@
 package io.github.andrewmatzureff.mystictutorialyt;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
 import io.github.andrewmatzureff.mystictutorialyt.screen.LoadingScreen;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +32,7 @@ public class Main extends Game {
     private AssetService assetService;
     private GLProfiler glProfiler;
     private FPSLogger fpsLogger;
+    private InputMultiplexer inputMultiplexer;
 
     public Batch getBatch() {
         return batch;
@@ -56,6 +55,9 @@ public class Main extends Game {
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        inputMultiplexer = new InputMultiplexer();
+        Gdx.input.setInputProcessor(inputMultiplexer);
+
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
@@ -106,5 +108,11 @@ public class Main extends Game {
         batch.dispose();
         assetService.debugDiagnostics();
         assetService.dispose();
+    }
+
+    public void setInputProcessors(InputProcessor... processors) {
+        inputMultiplexer.clear();
+        if (processors == null) return;
+        Arrays.stream(processors).forEach(inputMultiplexer::addProcessor);
     }
 }

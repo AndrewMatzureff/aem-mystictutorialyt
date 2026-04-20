@@ -19,6 +19,7 @@
  <tile id="2">
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
+   <property name="controller" type="bool" value="true"/>
    <property name="life" type="float" value="10"/>
    <property name="speed" type="float" value="3"/>
   </properties>

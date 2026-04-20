@@ -16,7 +16,11 @@
   <object id="1" gid="193" x="360" y="132" width="80" height="112"/>
   <object id="2" gid="194" x="423.333" y="195.333" width="41" height="63"/>
   <object id="3" gid="194" x="54.6667" y="316.667" width="41" height="63"/>
-  <object id="4" name="Player" gid="195" x="243.333" y="227.333" width="32" height="32"/>
+  <object id="4" name="Player" gid="195" x="243.333" y="227.333" width="32" height="32">
+   <properties>
+    <property name="controller" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="4" name="foreground" width="30" height="20">
   <data encoding="base64" compression="zlib">

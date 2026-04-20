@@ -1,6 +1,8 @@
 package io.github.andrewmatzureff.mystictutorialyt;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -12,6 +14,10 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
 import io.github.andrewmatzureff.mystictutorialyt.asset.MapAsset;
+import io.github.andrewmatzureff.mystictutorialyt.input.GameControllerState;
+import io.github.andrewmatzureff.mystictutorialyt.input.KeyboardController;
+import io.github.andrewmatzureff.mystictutorialyt.system.ControllerSystem;
+import io.github.andrewmatzureff.mystictutorialyt.system.MoveSystem;
 import io.github.andrewmatzureff.mystictutorialyt.system.RenderSystem;
 import io.github.andrewmatzureff.mystictutorialyt.tiled.TiledAshleyConfigurator;
 import io.github.andrewmatzureff.mystictutorialyt.tiled.TiledService;
@@ -22,34 +28,34 @@ import static io.github.andrewmatzureff.mystictutorialyt.Main.UNIT_SCALE;
 
 /** First screen of the application. Displayed after the application is created. */
 public class GameScreen extends ScreenAdapter {
-    private final Main game;
-    private final Batch batch;
-    private final AssetService assetService;
-    private final Viewport viewport;
-    private final OrthographicCamera camera;
     private final Engine engine;
     private final TiledService tiledService;
     private final TiledAshleyConfigurator tiledAshleyConfigurator;
+    private final KeyboardController keyboardController;
+    private final Main game;
 
     public GameScreen(Main game) {
         this.game = game;
-        assetService = game.getAssetService();
-        viewport = game.getViewport();
-        camera = game.getCamera();
-        batch = game.getBatch();
-        tiledService = new TiledService(assetService);
+        tiledService = new TiledService(game.getAssetService());
         engine = new Engine();
-        tiledAshleyConfigurator = new TiledAshleyConfigurator(engine, assetService);
+        tiledAshleyConfigurator = new TiledAshleyConfigurator(engine, game.getAssetService());
+        keyboardController = new KeyboardController(GameControllerState.class, engine);
 
-        engine.addSystem(new RenderSystem(batch, viewport, camera));
+        engine.addSystem(new ControllerSystem());
+        engine.addSystem(new MoveSystem());
+        engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
 //        engine.addSystem(new MoveSystem(batch, viewport, assetService));
 //        engine.addSystem(new AnimationSystem(batch, viewport, assetService));
     }
 
     @Override
     public void show() {
+        game.setInputProcessors(keyboardController);
+        keyboardController.setActiveState(GameControllerState.class);
+
         tiledService.setMapChangeConsumer(engine.getSystem(RenderSystem.class)::setMap);
         tiledService.setLoadObjectConsumer(tiledAshleyConfigurator::onLoadObject);
+
         TiledMap tiledMap = tiledService.loadMap(MapAsset.MAIN);
         tiledService.setMap(tiledMap);
     }
@@ -63,6 +69,10 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         delta = Math.min(delta, 1f / 30);
         engine.update(delta);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            System.out.println("W");
+        }
     }
 
     @Override
