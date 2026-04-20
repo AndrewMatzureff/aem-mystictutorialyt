@@ -16,9 +16,7 @@ import io.github.andrewmatzureff.mystictutorialyt.asset.AssetService;
 import io.github.andrewmatzureff.mystictutorialyt.asset.MapAsset;
 import io.github.andrewmatzureff.mystictutorialyt.input.GameControllerState;
 import io.github.andrewmatzureff.mystictutorialyt.input.KeyboardController;
-import io.github.andrewmatzureff.mystictutorialyt.system.ControllerSystem;
-import io.github.andrewmatzureff.mystictutorialyt.system.MoveSystem;
-import io.github.andrewmatzureff.mystictutorialyt.system.RenderSystem;
+import io.github.andrewmatzureff.mystictutorialyt.system.*;
 import io.github.andrewmatzureff.mystictutorialyt.tiled.TiledAshleyConfigurator;
 import io.github.andrewmatzureff.mystictutorialyt.tiled.TiledService;
 
@@ -43,6 +41,9 @@ public class GameScreen extends ScreenAdapter {
 
         engine.addSystem(new ControllerSystem());
         engine.addSystem(new MoveSystem());
+        engine.addSystem(new FSMSystem());
+        engine.addSystem(new FacingSystem());
+        engine.addSystem(new AnimationSystem(game.getAssetService()));
         engine.addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));
 //        engine.addSystem(new MoveSystem(batch, viewport, assetService));
 //        engine.addSystem(new AnimationSystem(batch, viewport, assetService));

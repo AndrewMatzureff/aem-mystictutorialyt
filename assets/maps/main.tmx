@@ -18,6 +18,8 @@
   <object id="3" gid="194" x="54.6667" y="316.667" width="41" height="63"/>
   <object id="4" name="Player" gid="195" x="243.333" y="227.333" width="32" height="32">
    <properties>
+    <property name="animation" value="IDLE"/>
+    <property name="animationSpeed" type="float" value="1"/>
     <property name="controller" type="bool" value="true"/>
    </properties>
   </object>

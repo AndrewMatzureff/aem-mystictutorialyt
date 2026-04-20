@@ -18,6 +18,8 @@
  </tile>
  <tile id="2">
   <properties>
+   <property name="animation" value="IDLE"/>
+   <property name="animationSpeed" type="float" value="1"/>
    <property name="atlasAsset" value="OBJECTS"/>
    <property name="controller" type="bool" value="true"/>
    <property name="life" type="float" value="10"/>
